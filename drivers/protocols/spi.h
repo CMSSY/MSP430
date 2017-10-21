@@ -50,7 +50,7 @@
 //****************************************************************************
 
 /*!
- * \brief Used in the writeSPI() and readSPI functions to select/deselect device
+ * \brief Used in the writeSPI() and readSPI() functions to select/deselect device
  */
 typedef struct SPI_CS_INFO
 {

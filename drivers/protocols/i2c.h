@@ -90,11 +90,9 @@ void initI2C(void);
  *
  * \return true if data successfully transferred
  *
- * \TODO figure out LPM for MSP430 Driverlib
- * \TODO figure out Driverlib function for global interrupt enabling/disabling
  */
 bool writeI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
-					 uint8_t p_byteCount, EUSCI_B_I2C_initMasterParam* p_params);
+			  uint8_t p_byteCount, EUSCI_B_I2C_initMasterParam* p_params);
 
 
 /*!
@@ -108,11 +106,9 @@ bool writeI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
  *
  * \return true if data successfully read
  *
- * \TODO figure out LPM for MSP430 Driverlib
- * \TODO figure out Driverlib function for global interrupt enabling/disabling
  */
 bool readI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
-					uint8_t p_byteCount, EUSCI_B_I2C_initMasterParam* p_params);
+			 uint8_t p_byteCount, EUSCI_B_I2C_initMasterParam* p_params);
 
 
 /*!
@@ -126,11 +122,9 @@ bool readI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
  *
  * \return true if data successfully read
  *
- * \TODO figure out LPM for MSP430 Driverlib
- * \TODO figure out Driverlib function for global interrupt enabling/disabling
  */
 bool readBurstI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
-						 uint32_t p_byteCount, EUSCI_B_I2C_initMasterParam* p_params);
+				  uint32_t p_byteCount, EUSCI_B_I2C_initMasterParam* p_params);
 
 
 #endif /* DRIVERS_I2C_H_ */

@@ -16,6 +16,7 @@
 //*****************************************************************************
 
 #define MCP4725_ADDR 0x60
+#define MCP4725_DAC_REG 0x40
 
 //*****************************************************************************
 //
@@ -28,7 +29,7 @@ void initMCP4725();
 
 
 /*!
- * Transmit a byte to the MCP4725
+ * Transmit a 12-bit value to the MCP4725
  *
  * \param[in] p_byte byte to transmit
  *
@@ -36,9 +37,8 @@ void initMCP4725();
  *
  * \note this should be called only after calling initMCP4725
  *
- * \TODO change arguments to I2C function calls to match prototype
  */
-void transmitByteMCP4725(uint8_t p_byte);
+void transmitValueMCP4725(uint16_t p_byte);
 
 
 /*!
@@ -51,7 +51,7 @@ void transmitByteMCP4725(uint8_t p_byte);
  *
  * \note this should be called only after calling initMCP4725
  */
-void transmitArrayMCP4725(uint8_t* p_array, uint32_t p_size);
+void transmitArrayMCP4725(uint16_t* p_array, uint32_t p_size);
 
 
 #endif // DRIVERS_MCP4725_H_

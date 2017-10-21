@@ -60,7 +60,7 @@ void initI2C(void)
 {
     /* Select I2C function for P1.7(SCL) & P1.6(SDA) */
     GPIO_setAsPeripheralModuleFunctionOutputPin(I2C_PORT, I2C_PIN_SDA | I2C_PIN_SCL,
-            GPIO_PRIMARY_MODULE_FUNCTION);
+            									GPIO_PRIMARY_MODULE_FUNCTION);
 
 }
 
@@ -78,12 +78,12 @@ bool writeI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
 
 	/* Setup the number of bytes to transmit + 1 to account for the register byte */
 	p_params->byteCounterThreshold = p_byteCount + 1;
-	EUSCI_B_I2C_initMaster(EUSCI_B0_BASE, (const EUSCI_B_I2C_initMasterParam *)p_params);
+	EUSCI_B_I2C_initMaster(EUSCI_B0_BASE, (EUSCI_B_I2C_initMasterParam *)p_params);
 
 	/* Load device slave address */
 	EUSCI_B_I2C_setSlaveAddress(EUSCI_B0_BASE, p_addr);
 
-    /* Enable I2C Module to start operations */
+	/* Enable I2C Module to start operations */
 	EUSCI_B_I2C_enable(EUSCI_B0_BASE);
 
   	/* Enable master STOP, TX and NACK interrupts */
@@ -103,17 +103,14 @@ bool writeI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
 	// NOW WAIT FOR DATA BYTES TO BE SENT
 	while(ui8Status == eUSCI_BUSY)
 	{
-//#ifdef USE_LPM
-//		MAP_PCM_gotoLPM0();
-//#else
-//		__no_operation();
-//#endif
+		__no_operation();
 	}
 
 	/* Disable interrupts */
 	EUSCI_B_I2C_disableInterrupt(EUSCI_B0_BASE, EUSCI_B_I2C_STOP_INTERRUPT +
 			EUSCI_B_I2C_NAK_INTERRUPT + EUSCI_B_I2C_TRANSMIT_INTERRUPT0);
 //    MAP_Interrupt_disableInterrupt(INT_EUSCIB1);
+//	__disable_interrupt();
 
 	if(ui8Status == eUSCI_NACK)
 	{
@@ -142,7 +139,7 @@ bool readI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
   	/* Setup the number of bytes to receive */
 	p_params->byteCounterThreshold = p_byteCount;
 	p_params->autoSTOPGeneration = EUSCI_B_I2C_SEND_STOP_AUTOMATICALLY_ON_BYTECOUNT_THRESHOLD;
-	EUSCI_B_I2C_initMaster(EUSCI_B0_BASE, (const EUSCI_B_I2C_initMasterParam *)p_params);
+	EUSCI_B_I2C_initMaster(EUSCI_B0_BASE, (EUSCI_B_I2C_initMasterParam *)p_params);
 
 	/* Load device slave address */
 	EUSCI_B_I2C_setSlaveAddress(EUSCI_B0_BASE, p_addr);
@@ -188,18 +185,14 @@ bool readI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
 	/* Wait for all data be received */
 	while(ui8Status == eUSCI_BUSY)
 	{
-//
-//#ifdef USE_LPM
-//		MAP_PCM_gotoLPM0();
-//#else
-//		__no_operation();
-//#endif
+		__no_operation();
 	}
 
 	/* Disable interrupts */
 	EUSCI_B_I2C_disableInterrupt(EUSCI_B0_BASE, EUSCI_B_I2C_STOP_INTERRUPT +
 			EUSCI_B_I2C_NAK_INTERRUPT + EUSCI_B_I2C_RECEIVE_INTERRUPT0);
-//    MAP_Interrupt_disableInterrupt(INT_EUSCIB1);
+//    MAP_Interrupt_disableInterrupt(INT_EUSCIB0);
+//    __disable_interrupt();
 
 	if(ui8Status == eUSCI_NACK)
 	{
@@ -229,7 +222,7 @@ bool readBurstI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
     p_params->autoSTOPGeneration = EUSCI_B_I2C_NO_AUTO_STOP;
     g_ui32ByteCount = p_byteCount;
     burstMode = true;
-    EUSCI_B_I2C_initMaster(EUSCI_B0_BASE, (const EUSCI_B_I2C_initMasterParam *)p_params);
+    EUSCI_B_I2C_initMaster(EUSCI_B0_BASE, (EUSCI_B_I2C_initMasterParam *)p_params);
 
 	/* Load device slave address */
     EUSCI_B_I2C_setSlaveAddress(EUSCI_B0_BASE, p_addr);
@@ -275,12 +268,7 @@ bool readBurstI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
 	/* Wait for all data be received */
 	while(ui8Status == eUSCI_BUSY)
 	{
-
-//#ifdef USE_LPM
-//		MAP_PCM_gotoLPM0();
-//#else
-//		__no_operation();
-//#endif
+		__no_operation();
 	}
 
 	/* Disable interrupts */
@@ -299,9 +287,16 @@ bool readBurstI2C(uint8_t p_addr, uint8_t p_reg, uint8_t *p_data,
 }
 
 /***********************************************************
-  Function: EUSCIB0_IRQHandler
+  USCI_B0_ISR
  */
-void EUSCIB0_IRQHandler(void)
+#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
+#pragma vector = USCI_B0_VECTOR
+__interrupt void USCI_B0_ISR(void)
+#elif defined(__GNUC__)
+void __attribute__ ((interrupt(USCI_B0_VECTOR))) USCI_B0_ISR (void)
+#else
+#error Compiler not supported!
+#endif
 {
     uint_fast16_t status;
 

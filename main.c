@@ -20,7 +20,7 @@
 void initDevices()
 {
     // initialize the MCP4725 for I2C communication
-    // initMCP4725();
+     initMCP4725();
 
     // initialize the SD card on the ST7735 SPI communication
     // initST7735SD();
@@ -32,7 +32,7 @@ void initDevices()
 void initSerial()
 {
     // initialize the I2C bus
-    // initI2C();
+     initI2C();
 
     // initialize the SPI bus
     // initSPI();
@@ -49,11 +49,18 @@ void main(void)
     // initialize serial communication
     initSerial();
 
+    // Disable the GPIO power-on default high-impedance mode to activate
+    // previously configured port settings
+    PM5CTL0 &= ~LOCKLPM5;
+
     // initialize devices
     initDevices();
 
+    // enable interrupts
+    __enable_interrupt();
+
     while(1)
     {
-    	_no_operation();
+    	__no_operation();
     }
 }
