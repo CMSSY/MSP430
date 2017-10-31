@@ -13,6 +13,11 @@
 #include "drivers/protocols/spi.h"
 #include "drivers/protocols/uart.h"
 
+/*! Task includes */
+#include "tasks/sounds.h"
+
+/*! Library includes */
+#include "libs/FatFs/diskio.h"
 
 /*!
  * Calls the init functions for the different hardware components
@@ -20,10 +25,11 @@
 void initDevices()
 {
     // initialize the MCP4725 for I2C communication
-     initMCP4725();
+//     initMCP4725();
 
     // initialize the SD card on the ST7735 SPI communication
-    // initST7735SD();
+//	initST7735SD();
+    disk_initialize(0);
 }
 
 /*!
@@ -32,7 +38,7 @@ void initDevices()
 void initSerial()
 {
     // initialize the I2C bus
-     initI2C();
+//     initI2C();
 
     // initialize the SPI bus
     // initSPI();
@@ -58,6 +64,8 @@ void main(void)
 
     // enable interrupts
     __enable_interrupt();
+
+    playSoundEffect("parrot.bmp");
 
     while(1)
     {
